@@ -3,33 +3,27 @@ import React, {Component} from "react";
 export default class Matrix extends Component {
   constructor(props) {
     super(props)
-    console.log({props})
-    const text = props.text
+    const text = props.text.replace(/ /g, '+')
     const characterSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+'
-    const currentText = this.inititialText(text, characterSet)
-    const randomness = props.randomness
+    const currentText = this.inititialText(text.length, characterSet)
+    const charRandom = props.charRandom
+    const updateRandom = props.updateRandom
 
-    this.state = { text, characterSet, currentText, randomness }
+    this.state = { text, characterSet, currentText, charRandom, updateRandom }
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 90);
+    this.interval = setInterval(() => this.tick(), 20);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  inititialText(text, characterSet, randomness) {
+  inititialText(len, characterSet) {
     let newText = ''
-    for (let i = 0; i < text.length; i++){
-      if (text[i] === '+') {
-        newText+='+'
-      } else {
-        newText+= Math.random() > randomness ** .5 ? 
-        text[i] : 
-        this.randomChar(characterSet)
-      }
+    for (let i = 0; i < len; i++){
+      newText += this.randomChar(characterSet)
     }
 
     return newText
@@ -48,15 +42,22 @@ export default class Matrix extends Component {
 
     for (let i = 0; i < this.state.currentText.length; i++)
     {
-      // First check by randomness if we should update the text
-      if (Math.random() > this.state.randomness) {
+      // First check by charRandom if we should update the current character
+      if (Math.random() > this.state.updateRandom) {
         // Check again to see if we should assign a random character
-        if (Math.random() > this.state.randomness) {
+        if (Math.random() > this.state.charRandom) {
           // No
           newText += this.state.text[i]
         } else {
           // Yes
-          newText += this.randomChar(this.state.characterSet)
+          const newChar = this.randomChar(this.state.characterSet)
+          const textChar = this.state.text[i]
+          if (!/[a-zA-Z]/.test(textChar)) {
+            newText += newChar
+            continue
+          }
+          const isLowerCase = textChar.toLowerCase() === textChar
+          newText += isLowerCase ? newChar.toLowerCase() : newChar.toUpperCase()
         }
       } else {
         newText += this.state.currentText[i]

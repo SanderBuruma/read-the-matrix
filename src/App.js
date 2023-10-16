@@ -5,7 +5,11 @@ import Matrix from './components/Matrix'
 function App() {
   return (
     <div className="App">
-      <Matrix randomness={.4} text="I+wish+I+was+very+rich+and+virtuous"/>
+      <Matrix 
+        charRandom={.5} 
+        updateRandom={.99} 
+        text="God make me a saint but not yet"
+      />
     </div>
   );
 }
